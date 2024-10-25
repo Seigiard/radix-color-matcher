@@ -1,8 +1,9 @@
-import path from 'path';
 import react from '@vitejs/plugin-react';
+import path from 'path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+  base: '/radix-color-matcher/',
   plugins: [react()],
   resolve: {
     alias: {

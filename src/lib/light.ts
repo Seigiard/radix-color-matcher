@@ -1,3 +1,5 @@
+// https://github.com/radix-ui/colors/blob/main/src/light.ts
+
 export const gray = {
   gray1: "#fcfcfc",
   gray2: "#f9f9f9",
