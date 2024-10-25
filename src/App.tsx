@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
 import { PaintBucket, Palette } from 'lucide-react';
 import { findClosestRadixColor } from '@/lib/colors';
 import type { RadixColor } from '@/lib/radix-colors';
@@ -11,14 +10,31 @@ function App() {
   const [inputColor, setInputColor] = useState('#000000');
   const [matchedColor, setMatchedColor] = useState<RadixColor | null>(null);
 
-  const handleColorMatch = () => {
+  useEffect(() => {
+    const handlePaste = (event) => {
+      // Access clipboard data
+      const clipboardData = event?.clipboardData || window?.clipboardData;
+      const pastedText = clipboardData.getData('text');
+      setInputColor(pastedText);
+    };
+
+    document.addEventListener('paste', handlePaste);
+
+    return () => {
+      document.removeEventListener('paste', handlePaste);
+    };
+  }, []);
+
+  useEffect(() => {
     const closest = findClosestRadixColor(inputColor);
+    console.log(inputColor, closest)
     setMatchedColor(closest);
-  };
+  }, [inputColor])
+
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-800 p-4 flex items-center justify-center">
-      <Card className="w-full max-w-2xl p-6 space-y-8">
+    <div className="min-h-screen min-w-screen bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-800 px-4 pt-16">
+      <Card className="w-96 m-auto p-6 space-y-8">
         <div className="space-y-2 text-center">
           <h1 className="text-3xl font-bold tracking-tighter">
             Radix Color Matcher
@@ -49,15 +65,6 @@ function App() {
                 />
               </div>
             </div>
-
-            <Button
-              onClick={handleColorMatch}
-              className="w-full"
-              size="lg"
-            >
-              <PaintBucket className="mr-2 h-4 w-4" />
-              Find Closest Match
-            </Button>
           </div>
 
           {matchedColor && (
