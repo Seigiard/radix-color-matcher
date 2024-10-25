@@ -1,35 +1,51 @@
-import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { PaintBucket, Palette } from 'lucide-react';
 import { findClosestRadixColor } from '@/lib/colors';
-import type { RadixColor } from '@/lib/radix-colors';
+import { $input, $matchedColor } from '@/store';
+import { useStore } from '@nanostores/react';
+import { Palette } from 'lucide-react';
+import { useEffect } from 'react';
+
+$input.subscribe((value) => {
+  $matchedColor.set(findClosestRadixColor(value));
+})
 
 function App() {
-  const [inputColor, setInputColor] = useState('#000000');
-  const [matchedColor, setMatchedColor] = useState<RadixColor | null>(null);
+  const input = useStore($input);
+  const matchedColor = useStore($matchedColor);
 
   useEffect(() => {
-    const handlePaste = (event) => {
-      // Access clipboard data
-      const clipboardData = event?.clipboardData || window?.clipboardData;
-      const pastedText = clipboardData.getData('text');
-      setInputColor(pastedText);
+    const handlePaste = (event?: ClipboardEvent | FocusEvent) => {
+      navigator.clipboard.readText()
+        .then(text => {
+          if (text) { $input.set(text); }
+        })
+        .catch(err => {
+          console.error(err)
+          if (!event) return;
+          // Access clipboard data
+          // @ts-expect-error window clipboardData is not typed
+          const clipboardData = event?.clipboardData || window?.clipboardData;
+          const pastedText = clipboardData.getData('text');
+          if (pastedText) { $input.set(pastedText); }
+        });
     };
 
+    function handleVisibilityChange() {
+      if (document.visibilityState === 'visible') {
+        handlePaste();
+      }
+    }
+
     document.addEventListener('paste', handlePaste);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       document.removeEventListener('paste', handlePaste);
+      document.removeEventListener('paste', handleVisibilityChange);
     };
   }, []);
-
-  useEffect(() => {
-    const closest = findClosestRadixColor(inputColor);
-    console.log(inputColor, closest)
-    setMatchedColor(closest);
-  }, [inputColor])
 
 
   return (
@@ -44,7 +60,7 @@ function App() {
           </p>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col gap-4">
           <div className="flex-1 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="color">Your Color</Label>
@@ -52,18 +68,21 @@ function App() {
                 <Input
                   id="color"
                   type="color"
-                  value={inputColor}
-                  onChange={(e) => setInputColor(e.target.value)}
+                  value={input}
+                  onChange={(e) => $input.set(e.target.value)}
                   className="h-10 w-20"
                 />
                 <Input
                   type="text"
-                  value={inputColor}
-                  onChange={(e) => setInputColor(e.target.value)}
+                  value={input}
+                  onChange={(e) => $input.set(e.target.value)}
                   placeholder="#000000"
                   className="flex-1"
                 />
               </div>
+              <p className="text-slate-600 text-sm leading-tight">
+                Press <kbd>Ctrl+V</kbd> anywhere on&nbsp;the&nbsp;page to&nbsp;paste a&nbsp;color from&nbsp;your&nbsp;clipboard
+              </p>
             </div>
           </div>
 
@@ -95,7 +114,7 @@ function App() {
               <div className="flex gap-2 h-24">
                 <div
                   className="flex-1 rounded-lg"
-                  style={{ backgroundColor: inputColor }}
+                  style={{ backgroundColor: input }}
                 />
                 <div
                   className="flex-1 rounded-lg"
