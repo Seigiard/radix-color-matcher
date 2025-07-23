@@ -1,5 +1,7 @@
 // https://github.com/radix-ui/colors/blob/main/src/light.ts
 
+import { createPalettes, RadixColor } from "./helper";
+
 export const gray = {
   gray1: "#fcfcfc",
   gray2: "#f9f9f9",
@@ -1859,3 +1861,7 @@ export const orangeP3A = {
   orangeA11: "color(display-p3 0.76 0.34 0)",
   orangeA12: "color(display-p3 0.323 0.185 0.127)",
 };
+
+const { colors } = createPalettes(gray, mauve, slate, sage, olive, sand, tomato, red, ruby, crimson, pink, plum, purple, violet, indigo, cyan, teal, jade, green, grass, brown, bronze, gold, sky, mint, lime, yellow, amber, orange)
+
+export const radixPalette: RadixColor[] = colors

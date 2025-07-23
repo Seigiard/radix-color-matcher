@@ -64,8 +64,24 @@ h1, h2, h3, h4, h5, h6 {
 body {
   color: var(--fg-base);
   background: linear-gradient(to right bottom, rgb(250, 250, 250), rgb(244, 244, 245));
-  padding: 13vh 2rem;
+  padding: 2rem;
   min-height: 100vh;
+}
+
+.layout-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (max-width: 1024px) {
+  .layout-container {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
 input {
@@ -90,8 +106,8 @@ input:focus-within {
   border-radius: var(--border-radius-l3);
   background: #fff;
   padding: 1.5rem;
-  max-width: 24rem;
-  margin: 0 auto;
+  width: 24rem;
+  flex-shrink: 0;
   display: grid;
   gap: 2rem;
 }
@@ -194,4 +210,68 @@ h2 {
 
 .color-showcase {
   border-radius: var(--border-radius-l2);
+}
+
+.palette-display {
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 5px 10px 0px,rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px;
+  border-radius: var(--border-radius-l3);
+  background: #fff;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 48rem;
+}
+
+@media (max-width: 1024px) {
+  .palette-display {
+    max-width: 24rem;
+  }
+}
+
+.palette-display h2 {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.palette-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.palette-scale h3 {
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  text-transform: capitalize;
+  color: var(--fg-base);
+}
+
+.color-swatches {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 0.25rem;
+}
+
+.color-swatch {
+  aspect-ratio: 1;
+  border-radius: var(--border-radius-l1);
+  border: 1px solid var(--border-base);
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.color-swatch:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.step-number {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  mix-blend-mode: difference;
+  color: white;
 }

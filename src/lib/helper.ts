@@ -1,4 +1,35 @@
-import { type RadixColor, radixColors } from './radix-colors';
+export interface RadixColor {
+  name: string;
+  value: string;
+  scale: string;
+  step: number;
+}
+
+export function createPalettes(...args: Record<string, string>[]) {
+  const colors = [...args].map(palette => {
+    return Object.keys(palette).map(key => {
+      // separate text and number from key
+      const [scale, step] = getScaleAndStep(key)
+      return {
+        name: `${scale} ${step}`,
+        value: palette[key],
+        scale,
+        step
+      } as RadixColor
+    })
+  }).flat()
+
+  const availablePalettes = [...args].map(palette => getScaleAndStep(Object.keys(palette)[0])[0])
+
+  return { colors, availablePalettes }
+}
+
+function getScaleAndStep(str: string) {
+  const [, scale, step] = str.match(/([a-zA-Z]+)(\d+)/) as string[]
+  return [scale, Number(step)];
+}
+
+
 
 // Convert hex to RGB
 function hexToRgb(hex: string) {
@@ -42,27 +73,27 @@ function calculateDeltaE(lab1: { l: number; a: number; b: number }, lab2: { l: n
   const deltaL = lab1.l - lab2.l;
   const deltaA = lab1.a - lab2.a;
   const deltaB = lab1.b - lab2.b;
-  
+
   return Math.sqrt(deltaL * deltaL + deltaA * deltaA + deltaB * deltaB);
 }
 
 // Find the closest color
-export function findClosestRadixColor(inputColor: string): RadixColor {
+export function findClosestColorInPalette(inputColor: string, palette: RadixColor[]): RadixColor {
   const inputRgb = hexToRgb(inputColor);
-  if (!inputRgb) return radixColors[0];
-  
+  if (!inputRgb) return palette[0];
+
   const inputLab = rgbToLab(inputRgb);
-  
-  let closestColor = radixColors[0];
+
+  let closestColor = palette[0];
   let minDistance = Infinity;
 
-  for (const color of radixColors) {
+  for (const color of palette) {
     const colorRgb = hexToRgb(color.value);
     if (!colorRgb) continue;
-    
+
     const colorLab = rgbToLab(colorRgb);
     const distance = calculateDeltaE(inputLab, colorLab);
-    
+
     if (distance < minDistance) {
       minDistance = distance;
       closestColor = color;
