@@ -1,46 +1,47 @@
-import { $input, $matchedColor } from "@/store";
-import { useStore } from "@nanostores/react";
-import { websitePalette } from "./lib/website-palette";
-import { findClosestColorInPalette } from "./lib/helper";
+import { $input, $matchedColor } from '@/store'
+import { useStore } from '@nanostores/react'
+// import { websitePalette as palette } from './lib/website-palette'
+import { radixPalette as palette } from './lib/radix-palette'
+import { findClosestColorInPalette } from './lib/helper'
 
 $input.subscribe((value) => {
-    $matchedColor.set(findClosestColorInPalette(value, websitePalette));
-});
+  $matchedColor.set(findClosestColorInPalette(value, palette))
+})
 
 const handlePaste = (event?: ClipboardEvent | FocusEvent) => {
   navigator.clipboard
-  .readText()
+    .readText()
     .then((text) => {
       if (text) {
-        $input.set(text);
+        $input.set(text)
       }
     })
     .catch((err) => {
-      console.error(err);
+      console.error(err)
 
-      if (!event) return;
+      if (!event) return
       // Access clipboard data
       // @ts-expect-error window clipboardData is not typed
-      const clipboardData = event?.clipboardData || window?.clipboardData;
-      const pastedText = clipboardData.getData("text");
+      const clipboardData = event?.clipboardData || window?.clipboardData
+      const pastedText = clipboardData.getData('text')
       if (pastedText) {
-        $input.set(pastedText);
+        $input.set(pastedText)
       }
-    });
-};
+    })
+}
 
 function handleVisibilityChange() {
-  if (document.visibilityState === "visible") {
-    handlePaste();
+  if (document.visibilityState === 'visible') {
+    handlePaste()
   }
 }
 
-document.addEventListener("paste", handlePaste);
-document.addEventListener("visibilitychange", handleVisibilityChange);
+document.addEventListener('paste', handlePaste)
+document.addEventListener('visibilitychange', handleVisibilityChange)
 
 function App() {
-  const input = useStore($input);
-  const matchedColor = useStore($matchedColor);
+  const input = useStore($input)
+  const matchedColor = useStore($matchedColor)
 
   return (
     <div className="layout-container">
@@ -83,7 +84,10 @@ function App() {
               ></div>
               <h3>{matchedColor.name}</h3>
               <p className="value">{matchedColor.value}</p>
-              <p className="scale">{matchedColor.scale} scale <small>(step {matchedColor.step})</small></p>
+              <p className="scale">
+                {matchedColor.scale} scale{' '}
+                <small>(step {matchedColor.step})</small>
+              </p>
             </div>
             <div className="color-comparison">
               <div
@@ -103,13 +107,16 @@ function App() {
         <h2>Available Colors</h2>
         <div className="palette-grid">
           {Object.entries(
-            websitePalette.reduce((acc, color) => {
-              if (!acc[color.scale]) {
-                acc[color.scale] = [];
-              }
-              acc[color.scale].push(color);
-              return acc;
-            }, {} as Record<string, typeof websitePalette>)
+            palette.reduce(
+              (acc, color) => {
+                if (!acc[color.scale]) {
+                  acc[color.scale] = []
+                }
+                acc[color.scale].push(color)
+                return acc
+              },
+              {} as Record<string, typeof palette>
+            )
           ).map(([scaleName, colors]) => (
             <div key={scaleName} className="palette-scale">
               <h3>{scaleName}</h3>
@@ -133,7 +140,7 @@ function App() {
         </div>
       </section>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
