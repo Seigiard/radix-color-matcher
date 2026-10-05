@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint:anti-slop": "oxlint --config .oxlintrc.anti-slop.json ."
   },
   "dependencies": {
     "@nanostores/persistent": "^0.10.2",
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@oxlint/plugins": "1.87.0",
     "@types/node": "^22.19.2",
     "@types/react": "^18.3.27",
     "@types/react-dom": "^18.3.7",
@@ -29,6 +31,7 @@
     "eslint-plugin-perfectionist": "^3.9.1",
     "eslint-plugin-prettier": "^5.5.4",
     "globals": "^15.15.0",
+    "oxlint": "1.87.0",
     "postcss": "^8.5.6",
     "prettier": "3.3.3",
     "typescript": "^5.9.3",
